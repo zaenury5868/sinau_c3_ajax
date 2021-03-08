@@ -20,7 +20,7 @@ class Serverside_model extends CI_Model {
 		if (isset($_POST['order'])) {
 			$this->db->order_by($this->order[$_POST['order']['0']['column']],$_POST['order']['0']['dir']);
 		} else {
-			$this->db->order_by('nama_depan', 'ASC');
+			$this->db->order_by('id', 'DESC');
 		}
 	}
 	public function getDataTable()
@@ -44,5 +44,11 @@ class Serverside_model extends CI_Model {
 	{
 		$this->db->from($this->table);
 		return $this->db->count_all_results();
+	}
+
+	public function create($data)
+	{
+		$this->db->insert('karyawan', $data);
+		return $this->db->affected_rows();
 	}
 }
