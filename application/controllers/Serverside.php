@@ -43,6 +43,7 @@ class Serverside extends CI_Controller {
 	}
 	public function add()
 	{
+		$this->_validation();
 		$data = [
 			'nama_depan' => htmlspecialchars($this->input->post('firstName')),
 			'nama_belakang' => htmlspecialchars($this->input->post('lastName')),
@@ -66,6 +67,7 @@ class Serverside extends CI_Controller {
 	}
 	public function update()
 	{
+		$this->_validation();
 		$data = [
 			'nama_depan' => htmlspecialchars($this->input->post('firstName')),
 			'nama_belakang' => htmlspecialchars($this->input->post('lastName')),
@@ -73,7 +75,7 @@ class Serverside extends CI_Controller {
 			'no_hp' => htmlspecialchars($this->input->post('mobilePhoneNumber'))
 		];
 
-		if ($this->Serverside_model->update(array('id' => $this->input->post('id')), $data)> 0){
+		if ($this->Serverside_model->update(array('id' => $this->input->post('id')), $data) >= 0){
 			$message['status'] = 'success';
 		}else{
 			$message['status'] = 'failed';
@@ -89,5 +91,38 @@ class Serverside extends CI_Controller {
 			$message['status'] = 'failed';
 		};
 		$this->output->set_content_type('application/json')->set_output(json_encode($message));	
+	}
+
+	private function _validation()
+	{
+		$data = array();
+		$data['error_string'] = array();
+		$data['inputerror'] = array();
+		$data['status'] = true;
+
+		if($this->input->post('firstName') == ''){
+			$data['inputerror'][] ='firstName';
+			$data['error_string'][] = 'Nama depan wajib diisi';
+			$data['status'] = false;
+		}
+		if($this->input->post('lastName') == ''){
+			$data['inputerror'][] ='lastName';
+			$data['error_string'][] = 'Nama belakang wajib diisi';
+			$data['status'] = false;
+		}
+		if($this->input->post('address') == ''){
+			$data['inputerror'][] ='address';
+			$data['error_string'][] = 'Alamat wajib diisi';
+			$data['status'] = false;
+		}
+		if($this->input->post('mobilePhoneNumber') == ''){
+			$data['inputerror'][] ='mobilePhoneNumber';
+			$data['error_string'][] = 'No hp wajib diisi';
+			$data['status'] = false;
+		}
+		if($data['status'] == false) {
+			echo json_encode($data);
+			exit();
+		}
 	}
 }

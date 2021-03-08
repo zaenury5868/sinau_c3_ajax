@@ -43,21 +43,25 @@
                                                 <label for="firstName">Nama Depan</label>
                                                 <input type="text" class="form-control" id="firstName" name="firstName"
                                                     placeholder="Masukkan nama depan">
+                                                <div class="invalid-feedback"></div>
                                             </div>
                                             <div class="form-group">
                                                 <label for="lastName">Nama Belakang</label>
                                                 <input type="text" class="form-control" id="lastName" name="lastName"
                                                     placeholder="Masukkan nama belakang">
+                                                <div class="invalid-feedback"></div>
                                             </div>
                                             <div class="form-group">
                                                 <label for="address">Alamat</label>
                                                 <textarea type="text" class="form-control" id="address" name="address"
                                                     placeholder="Masukkan alamat"></textarea>
+                                                <div class="invalid-feedback"></div>
                                             </div>
                                             <div class="form-group">
                                                 <label for="mobilePhoneNumber">No Hp</label>
                                                 <input type="text" class="form-control" id="mobilePhoneNumber"
                                                     name="mobilePhoneNumber" placeholder="Masukkan no hp">
+                                                <div class="invalid-feedback"></div>
                                             </div>
                                         </form>
                                     </div>
@@ -151,7 +155,15 @@
                 if (response.status == 'success') {
                     modal.modal('hide');
                     reloadTable();
+                } else {
+                    for (var i = 0; i < response.inputerror.length; i++) {
+                        $('[name = "' + response.inputerror[i] + '"]').addClass('is-invalid');
+                        $('[name = "' + response.inputerror[i] + '"]').next().text(response.error_string[
+                            i]);
+                    }
                 }
+                btnSave.text('simpan data');
+                btnSave.attr('disabled', false);
             },
             error: function() {
                 console.log('error database');
@@ -170,6 +182,7 @@
             dataType: "JSON",
             success: function(response) {
                 if (type == 'edit') {
+                    formData.find('input').removeClass('is-invalid');
                     modalTitle.text('ubah data');
                     btnSave.text('Ubah Data');
                     btnSave.attr('disabled', false);
@@ -181,7 +194,7 @@
                     modal.modal('show');
                 } else {
                     var result = confirm('apakah akan menghapus data ini?' + response.nama_depan);
-                    if (result) { //tekan ok
+                    if (result) { // saat tekan tombol hapus
                         deleteData(response.id);
                     }
                 }
