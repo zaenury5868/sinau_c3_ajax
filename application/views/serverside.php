@@ -169,15 +169,33 @@
             url: "<?= base_url('serverside/byid/') ?>" + id,
             dataType: "JSON",
             success: function(response) {
-                modalTitle.text('ubah data');
-                btnSave.text('Ubah Data');
-                btnSave.attr('disabled', false);
-                $('[name="id"]').val(response.id);
-                $('[name="firstName"]').val(response.nama_depan);
-                $('[name="lastName"]').val(response.nama_belakang);
-                $('[name="address"]').val(response.alamat);
-                $('[name="mobilePhoneNumber"]').val(response.no_hp);
-                modal.modal('show');
+                if (type == 'edit') {
+                    modalTitle.text('ubah data');
+                    btnSave.text('Ubah Data');
+                    btnSave.attr('disabled', false);
+                    $('[name="id"]').val(response.id);
+                    $('[name="firstName"]').val(response.nama_depan);
+                    $('[name="lastName"]').val(response.nama_belakang);
+                    $('[name="address"]').val(response.alamat);
+                    $('[name="mobilePhoneNumber"]').val(response.no_hp);
+                    modal.modal('show');
+                } else {
+                    var result = confirm('apakah akan menghapus data ini?' + response.nama_depan);
+                    if (result) { //tekan ok
+                        deleteData(response.id);
+                    }
+                }
+            }
+        });
+    }
+
+    function deleteData(id) {
+        $.ajax({
+            type: "POST",
+            url: "<?= base_url('serverside/delete/')?>" + id,
+            dataType: "JSON",
+            success: function(response) {
+                reloadTable();
             }
         });
     }

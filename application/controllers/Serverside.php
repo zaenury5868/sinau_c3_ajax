@@ -28,6 +28,7 @@ class Serverside extends CI_Controller {
 			$row[] = $result->no_hp;
 			$row[] = '
 				<a href="#" class="btn btn-success btn-sm" onClick="byid('."'".$result->id."', 'edit'".')">Edit</a>
+				<a href="#" class="btn btn-danger btn-sm" onClick="byid('."'".$result->id."', 'delete'".')">Delete</a>
 			';
 			$data[] = $row;
 		}
@@ -78,5 +79,15 @@ class Serverside extends CI_Controller {
 			$message['status'] = 'failed';
 		};
 		$this->output->set_content_type('application/json')->set_output(json_encode($message));
+	}
+	
+	public function delete($id)
+	{
+		if ($this->Serverside_model->delete($id)> 0){
+			$message['status'] = 'success';
+		}else{
+			$message['status'] = 'failed';
+		};
+		$this->output->set_content_type('application/json')->set_output(json_encode($message));	
 	}
 }

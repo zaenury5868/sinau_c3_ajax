@@ -62,4 +62,10 @@ class Serverside_model extends CI_Model {
 		return $this->db->affected_rows();
 		
 	}
+
+	public function delete($id)
+	{
+		$this->db->delete($this->table, ['id' => $id]);
+		return $this->db->affected_rows();
+	}
 }
