@@ -26,6 +26,9 @@ class Serverside extends CI_Controller {
 			$row[] = $result->nama_belakang;
 			$row[] = $result->alamat;
 			$row[] = $result->no_hp;
+			$row[] = '
+				<a href="#" class="btn btn-success btn-sm" onClick="byid('."'".$result->id."', 'edit'".')">Edit</a>
+			';
 			$data[] = $row;
 		}
 		$output = array(
@@ -47,6 +50,29 @@ class Serverside extends CI_Controller {
 		];
 
 		if ($this->Serverside_model->create($data)> 0){
+			$message['status'] = 'success';
+		}else{
+			$message['status'] = 'failed';
+		};
+		$this->output->set_content_type('application/json')->set_output(json_encode($message));
+	}
+	public function byid($id)
+	{
+		$data = $this->Serverside_model->getdataById($id);
+		
+		$this->output->set_content_type('application/json')->set_output(json_encode($data));
+		
+	}
+	public function update()
+	{
+		$data = [
+			'nama_depan' => htmlspecialchars($this->input->post('firstName')),
+			'nama_belakang' => htmlspecialchars($this->input->post('lastName')),
+			'alamat' => htmlspecialchars($this->input->post('address')),
+			'no_hp' => htmlspecialchars($this->input->post('mobilePhoneNumber'))
+		];
+
+		if ($this->Serverside_model->update(array('id' => $this->input->post('id')), $data)> 0){
 			$message['status'] = 'success';
 		}else{
 			$message['status'] = 'failed';

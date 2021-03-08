@@ -38,6 +38,7 @@
                                     </div>
                                     <div class="modal-body form">
                                         <form action="#" id="formData">
+                                            <input type="hidden" id="id" name="id" value="">
                                             <div class="form-group">
                                                 <label for="firstName">Nama Depan</label>
                                                 <input type="text" class="form-control" id="firstName" name="firstName"
@@ -77,6 +78,7 @@
                                     <th>Nama Belakang</th>
                                     <th>Alamat</th>
                                     <th>No Hp</th>
+                                    <th>action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -98,6 +100,7 @@
     <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.23/js/dataTables.bootstrap4.min.js"></script>
     <script>
+    var saveData;
     var modal = $('#modalData');
     var tableData = $('#myTable');
     var formData = $('#formData');
@@ -125,6 +128,7 @@
     }
 
     function add() {
+        saveData = 'tambah';
         formData[0].reset();
         modal.modal('show');
         modalTitle.text('Tambah data');
@@ -133,7 +137,11 @@
     function save() {
         btnSave.text('Mohon tunggu');
         btnSave.attr('disabled', true);
-        url = "<?= base_url('serverside/add'); ?>"
+        if (saveData == 'tambah') {
+            url = "<?= base_url('serverside/add'); ?>"
+        } else {
+            url = "<?= base_url('serverside/update'); ?>"
+        }
         $.ajax({
             type: "POST",
             url: url,
@@ -147,6 +155,29 @@
             },
             error: function() {
                 console.log('error database');
+            }
+        });
+    }
+
+    function byid(id, type) {
+        if (type == 'edit') {
+            saveData = 'edit';
+            formData[0].reset();
+        }
+        $.ajax({
+            type: "GET",
+            url: "<?= base_url('serverside/byid/') ?>" + id,
+            dataType: "JSON",
+            success: function(response) {
+                modalTitle.text('ubah data');
+                btnSave.text('Ubah Data');
+                btnSave.attr('disabled', false);
+                $('[name="id"]').val(response.id);
+                $('[name="firstName"]').val(response.nama_depan);
+                $('[name="lastName"]').val(response.nama_belakang);
+                $('[name="address"]').val(response.alamat);
+                $('[name="mobilePhoneNumber"]').val(response.no_hp);
+                modal.modal('show');
             }
         });
     }
