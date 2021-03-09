@@ -98,6 +98,7 @@
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"
         integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous">
     </script>
@@ -138,6 +139,33 @@
         modalTitle.text('Tambah data');
     }
 
+    function message(icon, text) {
+        Swal.fire({
+            icon: icon,
+            title: 'Data table serverside',
+            text: text,
+            showConfrimButton: false,
+            showCancelButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+        });
+    }
+
+    function deleteQuestion(id, name) {
+        Swal.fire({
+            title: 'Apakah anda yakin?',
+            text: "Akan menghapus" + name + "?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteData(id);
+            }
+        })
+    }
+
     function save() {
         btnSave.text('Mohon tunggu');
         btnSave.attr('disabled', true);
@@ -155,6 +183,11 @@
                 if (response.status == 'success') {
                     modal.modal('hide');
                     reloadTable();
+                    if (saveData == 'tambah') {
+                        message('success', 'Data berhasil ditambah');
+                    } else {
+                        message('success', 'Data berhasil diubah');
+                    }
                 } else {
                     for (var i = 0; i < response.inputerror.length; i++) {
                         $('[name = "' + response.inputerror[i] + '"]').addClass('is-invalid');
@@ -166,7 +199,7 @@
                 btnSave.attr('disabled', false);
             },
             error: function() {
-                console.log('error database');
+                message('error', 'Server gangguan silahkan ulangi kembali');
             }
         });
     }
@@ -193,11 +226,11 @@
                     $('[name="mobilePhoneNumber"]').val(response.no_hp);
                     modal.modal('show');
                 } else {
-                    var result = confirm('apakah akan menghapus data ini?' + response.nama_depan);
-                    if (result) { // saat tekan tombol hapus
-                        deleteData(response.id);
-                    }
+                    deleteQuestion(response.id, response.nama_depan);
                 }
+            },
+            error: function() {
+                message('error', 'Server gangguan silahkan ulangi kembali');
             }
         });
     }
@@ -209,6 +242,10 @@
             dataType: "JSON",
             success: function(response) {
                 reloadTable();
+                message('success', 'Data berhasil dihapus');
+            },
+            error: function() {
+                message('error', 'Server gangguan silahkan ulangi kembali');
             }
         });
     }
